@@ -1,3 +1,7 @@
+document.getElementById("flipButton").addEventListener("click", () => {
+  playGame();
+});
+
 function flipCoin() {
   return new Promise((resolve, reject) => {
     const coinFlip = Math.random() > 0.5;
@@ -24,5 +28,17 @@ function getAdvice() {
     })
     .catch((error) => {
       document.getElementById("advice").innerText = "Error fetching advice.";
+    });
+}
+
+function playGame() {
+  document.getElementById("result").innerText = "Flipping...";
+  flipCoin()
+    .then((message) => {
+      document.getElementById("result").innerText = message;
+      return getAdvice();
+    })
+    .catch((error) => {
+      document.getElementById("result").innerText = error;
     });
 }
