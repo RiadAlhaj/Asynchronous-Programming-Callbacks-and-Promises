@@ -2,9 +2,9 @@ document.getElementById("flipButton").addEventListener("click", () => {
   playGame();
 });
 
-function flipCoin() {
+const flipCoin = async () => {
+  const coinFlip = Math.random() > 0.5;
   return new Promise((resolve, reject) => {
-    const coinFlip = Math.random() > 0.5;
     setTimeout(() => {
       if (coinFlip) {
         resolve("You win! It's heads!");
@@ -13,32 +13,28 @@ function flipCoin() {
       }
     }, 1000);
   });
-}
+};
 
-function getAdvice() {
-  return fetch("https://api.adviceslip.com/advice")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to fetch advice");
-      }
-      return response.json();
-    })
-    .then((data) => {
-      document.getElementById("advice").innerText = "Advice: " + data.slip.advice;
-    })
-    .catch((error) => {
-      document.getElementById("advice").innerText = "Error fetching advice.";
-    });
-}
+const getAdvice = async () => {
+  try {
+    const response = await fetch("https://api.adviceslip.com/advice");
+    if (!response.ok) {
+      throw new Error("Failed to fetch advice");
+    }
+    const data = await response.json();
+    document.getElementById("advice").innerText = "Advice: " + data.slip.advice;
+  } catch (error) {
+    document.getElementById("advice").innerText = "Error fetching advice.";
+  }
+};
 
-function playGame() {
+const playGame = async () => {
   document.getElementById("result").innerText = "Flipping...";
-  flipCoin()
-    .then((message) => {
-      document.getElementById("result").innerText = message;
-      return getAdvice();
-    })
-    .catch((error) => {
-      document.getElementById("result").innerText = error;
-    });
-}
+  try {
+    const message = await flipCoin();
+    document.getElementById("result").innerText = message;
+    await getAdvice();
+  } catch (error) {
+    document.getElementById("result").innerText = error;
+  }
+};
